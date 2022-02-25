@@ -1,0 +1,23 @@
+{
+  "name": "type-safe-linq-in-memory",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henkrehorst/Type-safe-LINQ-in-memory.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/henkrehorst/Type-safe-LINQ-in-memory/issues"
+  },
+  "homepage": "https://github.com/henkrehorst/Type-safe-LINQ-in-memory#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "typescript": "^4.5.5"
+  }
+}
