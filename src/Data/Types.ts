@@ -1,7 +1,17 @@
-export type Course ={
+export type School = {
+    Name: string
+}
+
+export type Study = {
+    Name: string
+    Level: string
+    School: School
+}
+
+export type Course = {
     Subject: string
     Professor: Professor
-    Students: Array<Student>
+    Study: Study
 }
 
 export type Person = {
@@ -11,8 +21,14 @@ export type Person = {
 
 export type Student = Person & {
     StudentNumber: number
+    Courses: Array<Course>
 }
 
 export type Professor = Person & {
-    Certificate: Array<string>
+    Certificate: Array<Certificate>
+}
+
+export type Certificate = {
+    Subject: string
+    Level: string
 }
