@@ -1,4 +1,4 @@
-import { School, Study, Course, Professor, Student, Certificate } from "./Types"
+import { School, Study, Course, Professor, Student, Certificate } from "../Models/DataTypes"
 
 export const school1: School = {
     Name: 'Hogeschool Rotterdam'
