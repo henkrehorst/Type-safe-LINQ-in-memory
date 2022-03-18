@@ -21,6 +21,7 @@ export type Person = {
 
 export type Student = Person & {
     StudentNumber: number
+    Active: boolean
     Courses: Array<Course>
 }
 

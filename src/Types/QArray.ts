@@ -1,7 +1,8 @@
 export type QArray<T> = {
     data: Array<T>
-    select: <K extends keyof T>(...props: K[]) => Array<Pick<T,typeof props[number]>>
-    orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => T[]
+    select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
+    orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
+    toArray: () => Array<T>
 }
 
 export const qArray = <T>(initData: Array<T>): QArray<T> => ({
@@ -13,10 +14,10 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
             props.forEach((prop: K) => {result[prop] = item[prop]})
             array.push(result as Pick<T, typeof props[number]>)
         });
-        return array
+        return qArray<Pick<T,typeof props[number]>>(array);
     },
     orderBy: function <K extends keyof T>(property: K, order: 'asc' | 'desc' = 'asc') {
-        return initData.sort((a, b) => {
+        return qArray<T>(initData.sort((a, b) => {
             if(order === 'desc') [a, b] = [b, a];
 
             switch (typeof a[property]) {
@@ -31,6 +32,7 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
             }
 
             return 0;
-        })
-    }
+        }));
+    },
+    toArray: () => initData
 })
