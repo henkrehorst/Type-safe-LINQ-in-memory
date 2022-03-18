@@ -17,6 +17,10 @@ describe('Select testing', () => {
 
         let selectedStudentArray = studentArray.select("FirstName", "StudentNumber")
 
-        expect(Object.keys(selectedStudentArray[0]) as Array<keyof typeof selectedStudentArray[0]>).to.equal(["FirstName","StudentNumber"])
+        expect(selectedStudentArray[0]).has.all.keys(["FirstName", "StudentNumber"])
+    })
+    it('', () => {
+        let students = qArray([student1, student2])
+        expect(students.select("FirstName")).to.deep.equal([{"FirstName": student1.FirstName},{"FirstName": student2.FirstName}])
     })
 })
