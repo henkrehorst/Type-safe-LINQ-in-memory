@@ -50,6 +50,7 @@ export const course2: Course = {
 }
 
 export const student1 : Student = {
+    Active: true,
     FirstName: 'Sybren',
     LastName: 'de Jongh',
     StudentNumber: 1,
@@ -57,6 +58,7 @@ export const student1 : Student = {
 }
 
 export const student2 : Student = {
+    Active: false,
     FirstName: 'Henk',
     LastName: 'Rehorst',
     StudentNumber: 2,
@@ -64,6 +66,7 @@ export const student2 : Student = {
 }
 
 export const student3 : Student = {
+    Active: true,
     FirstName: 'Mark',
     LastName: 'van t Hof',
     StudentNumber: 3,
