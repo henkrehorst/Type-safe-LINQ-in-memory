@@ -2,6 +2,7 @@ export type QArray<T> = {
     data: Array<T>
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
     orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
+    where: (f: (_: T) => boolean) => QArray<T>
     toArray: () => Array<T>
 }
 
@@ -33,6 +34,15 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
 
             return 0;
         }));
+    },
+    where: function(f: (_: T) => boolean) {
+        let newArray: Array<T> = []
+        this.data.forEach(object => {
+            if(f(object)){
+                newArray.push(object)
+            }
+        });
+        return qArray(newArray)
     },
     toArray: () => initData
 })
