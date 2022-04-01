@@ -36,13 +36,7 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         }));
     },
     where: function(f: (_: T) => boolean) {
-        let newArray: Array<T> = []
-        this.data.forEach(object => {
-            if(f(object)){
-                newArray.push(object)
-            }
-        });
-        return qArray(newArray)
+        return qArray(this.data.filter(f))
     },
     toArray: () => initData
 })
