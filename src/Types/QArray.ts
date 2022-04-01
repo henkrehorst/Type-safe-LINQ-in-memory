@@ -1,5 +1,5 @@
-type SelectKeys<T> = { [k in keyof T]: T[k] extends string | number ? k : never }[keyof T];
-type IncludeKeys<T> = { [k in keyof T]: T[k] extends Array<any> | object ? k : never }[keyof T];
+type SelectKeys<T> = { [K in keyof T]: T[K] extends string | number ? K : never }[keyof T];
+type IncludeKeys<T> = { [K in keyof T]: T[K] extends Array<any> | object ? K : never }[keyof T];
 type KeysOf<T> = keyof T;
 
 export type QArray<T> = {
