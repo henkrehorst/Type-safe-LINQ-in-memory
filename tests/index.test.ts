@@ -47,7 +47,7 @@ describe('OrderBy testing', () => {
 
 describe('Where testing', () => {
     it('filtering on string', () => {
-        let students = qArray([student1, student2, student2, student3])
+        let students = qArray([student1, student2, student3])
         expect(students.where(x => x.FirstName === "Henk").toArray()).to.deep.equal([student2])
     })
 })
