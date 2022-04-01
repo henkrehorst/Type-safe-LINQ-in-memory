@@ -1,3 +1,7 @@
+type SelectKeys<T> = { [k in keyof T]: T[k] extends string | number ? k : never }[keyof T];
+type IncludeKeys<T> = { [k in keyof T]: T[k] extends Array<any> | object ? k : never }[keyof T];
+type KeysOf<T> = keyof T;
+
 export type QArray<T> = {
     data: Array<T>
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
@@ -36,7 +40,7 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         }));
     },
     where: function(f: (_: T) => boolean) {
-        //We considered the standard filter function but we found it to be slower than a for loop
+        //We considered the standard filter function, but we found it to be slower than a for loop
         let newArray: Array<T> = []
         for(let i = 0; i < this.data.length; i++){
             if(f(this.data[i])){
