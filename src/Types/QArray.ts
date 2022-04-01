@@ -1,6 +1,6 @@
 type SelectKeys<T> = { [K in keyof T]: T[K] extends string | number ? K : never }[keyof T];
 
-type IncludeKeys<T> = { [K in keyof T]: T[K] extends Array<any> | object ? K : never }[keyof T];
+type IncludeKeys<T> = { [K in keyof T]: T[K] extends Array<object> | object ? K : never }[keyof T];
 
 type IncludeObject<T, K> = {[K in keyof T]: T[K] extends Array<object> | object ? K : never}[keyof T]
 
@@ -10,8 +10,8 @@ export type QArray<T> = {
     data: Array<T>
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
     orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
-    where: (f: (_: T) => boolean) => QArray<T>
-    include: <K extends keyof T>(param: K, test: (_: QArray<T[K]>) => any) => any
+    where: (f: (_: T) => boolean) => QArray<T>,
+    include: <K extends IncludeKeys<T>>(param: K, f: (_: T[K] extends Array<object> ? QArray<T[K][number]> : QArray<T[K]>) => any) => any,
     toArray: () => Array<T>
 }
 
@@ -54,7 +54,7 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         }
         return qArray(newArray)
     },
-    include: function <K extends keyof T>(param: K, test: (_: T[K]) => any){
+    include: function <K extends IncludeKeys<T>>(param: K, f: (_: T[K] extends Array<object> ? QArray<T[K][number]> : QArray<T[K]>) => any){
         return "";
     },
     toArray: () => initData
