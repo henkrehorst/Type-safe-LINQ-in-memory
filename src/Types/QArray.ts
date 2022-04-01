@@ -2,7 +2,7 @@ type SelectKeys<T> = { [K in keyof T]: T[K] extends string | number ? K : never 
 
 type IncludeKeys<T> = { [K in keyof T]: T[K] extends Array<any> | object ? K : never }[keyof T];
 
-type IncludeObject<T> = {[K in keyof T]: T[K] extends Array<object> | object ? K : never}[keyof T]
+type IncludeObject<T, K> = {[K in keyof T]: T[K] extends Array<object> | object ? K : never}[keyof T]
 
 type KeysOf<T> = keyof T;
 
@@ -11,7 +11,7 @@ export type QArray<T> = {
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
     orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
     where: (f: (_: T) => boolean) => QArray<T>
-    include: <K extends keyof T>(param: K, test: (_: IncludeObject<T>) => any) => any
+    include: <K extends keyof T>(param: K, test: (_: QArray<T[K]>) => any) => any
     toArray: () => Array<T>
 }
 
@@ -54,7 +54,7 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         }
         return qArray(newArray)
     },
-    include: function(test: (_: IncludeObject<T>) => any){
+    include: function <K extends keyof T>(param: K, test: (_: T[K]) => any){
         return "";
     },
     toArray: () => initData
