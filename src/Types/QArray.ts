@@ -6,12 +6,14 @@ type IncludeObject<T, K> = {[K in keyof T]: T[K] extends Array<object> | object 
 
 type KeysOf<T> = keyof T;
 
+type getArrayType<T> = T extends Array<object> ? T[number] : never
+
 export type QArray<T> = {
     data: Array<T>
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
     orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
     where: (f: (_: T) => boolean) => QArray<T>,
-    include: <K extends IncludeKeys<T>>(param: K, f: (_: T[K] extends Array<object> ? QArray<T[K][number]> : QArray<T[K]>) => any) => any,
+    include: <K extends IncludeKeys<T>>(param: K, f: (_: T[K] extends Array<object> ? QArray<getArrayType<T[K]>> : QArray<T[K]>) => any) => any,
     toArray: () => Array<T>
 }
 
@@ -54,7 +56,21 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         }
         return qArray(newArray)
     },
-    include: function <K extends IncludeKeys<T>>(param: K, f: (_: T[K] extends Array<object> ? QArray<T[K][number]> : QArray<T[K]>) => any){
+    include: function <K extends IncludeKeys<T>>(param: K, f: (_: T[K] extends Array<object> ? QArray<getArrayType<T[K]>> : QArray<T[K]>) => any){
+        for (let i = 0; i < this.data.length; i++) {
+            const element = this.data[i][param];
+            let newQArray: T[K] extends Array<object> ? QArray<getArrayType<T[K]>> : QArray<T[K]>
+
+            if(Array.isArray(element)){
+                newQArray = qArray(element)
+                let processed = f(newQArray)
+            }
+            else if(typeof element === 'object' && !Array.isArray(element) && element !== null){
+                let test: Array<T[K]> = [element]
+                newQArray = qArray(test)
+                let processed = f(newQArray)
+            }
+        }
         return "";
     },
     toArray: () => initData
