@@ -1,10 +1,6 @@
-type SelectKeys<T> = { [K in keyof T]: T[K] extends string | number ? K : never }[keyof T];
+import { isPropertyAccessOrQualifiedName } from "typescript";
 
-type IncludeKeys<T> = { [K in keyof T]: T[K] extends Array<object> | object ? K : never }[keyof T];
-
-type IncludeObject<T, K> = {[K in keyof T]: T[K] extends Array<object> | object ? K : never}[keyof T]
-
-type KeysOf<T> = keyof T;
+type IncludeKeys<T> = { [K in keyof T]: T[K] extends Array<object> ? K : never }[keyof T];
 
 type getArrayType<T> = T extends Array<object> ? T[number] : never
 
@@ -13,7 +9,7 @@ export type QArray<T> = {
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
     orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
     where: (f: (_: T) => boolean) => QArray<T>,
-    include: <K extends IncludeKeys<T>>(param: K, f: (_: T[K] extends Array<object> ? QArray<getArrayType<T[K]>> : QArray<T[K]>) => any) => any,
+    include: <K extends IncludeKeys<T>, P extends getArrayType<T[K]>>(param: K, f: (_: QArray<P>) => QArray<any>) => QArray<any>,
     toArray: () => Array<T>
 }
 
@@ -56,22 +52,20 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         }
         return qArray(newArray)
     },
-    include: function <K extends IncludeKeys<T>>(param: K, f: (_: T[K] extends Array<object> ? QArray<getArrayType<T[K]>> : QArray<T[K]>) => any){
+    include: function <K extends IncludeKeys<T>, P extends getArrayType<T[K]>>(param: K, f: (_: QArray<P>) => QArray<any>){
+        let newDataAray: Omit<T,K>
         for (let i = 0; i < this.data.length; i++) {
-            const element = this.data[i][param];
-            let newQArray: T[K] extends Array<object> ? QArray<getArrayType<T[K]>> : QArray<T[K]>
+            const element: T[K] = this.data[i][param];
 
+            let newQArray: QArray<P>
             if(Array.isArray(element)){
                 newQArray = qArray(element)
                 let processed = f(newQArray)
+                let test: Omit<T, K>
             }
-            else if(typeof element === 'object' && !Array.isArray(element) && element !== null){
-                let test: Array<T[K]> = [element]
-                newQArray = qArray(test)
-                let processed = f(newQArray)
-            }
+
         }
-        return "";
+        return qArray(this.data);
     },
     toArray: () => initData
 })
