@@ -1,5 +1,3 @@
-import { isPropertyAccessOrQualifiedName } from "typescript";
-
 type IncludeKeys<T> = { [K in keyof T]: T[K] extends Array<object> ? K : never }[keyof T];
 
 type getArrayType<T> = T extends Array<object> ? T[number] : never
@@ -9,7 +7,7 @@ export type QArray<T> = {
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
     orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
     where: (f: (_: T) => boolean) => QArray<T>,
-    include: <K extends IncludeKeys<T>, P extends getArrayType<T[K]>>(param: K, f: (_: QArray<P>) => QArray<any>) => QArray<any>,
+    include: <K extends IncludeKeys<T>, P extends getArrayType<T[K]>>(param: K, f: (_: QArray<P>) => QArray<any>) => QArray<Omit<T,K> & {[key in K] : QArray<any>}>,
     toArray: () => Array<T>
 }
 
@@ -53,17 +51,20 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         return qArray(newArray)
     },
     include: function <K extends IncludeKeys<T>, P extends getArrayType<T[K]>>(param: K, f: (_: QArray<P>) => QArray<any>){
-        let newDataAray: Omit<T,K>
+        type newDataType = Omit<T,K> & {[key in K] : Array<any>};
         for (let i = 0; i < this.data.length; i++) {
             const element: T[K] = this.data[i][param];
-
-            let newQArray: QArray<P>
             if(Array.isArray(element)){
-                newQArray = qArray(element)
-                let processed = f(newQArray)
-                let test: Omit<T, K>
+                let processed: QArray<any> = f(qArray(element));
+                let { [param]: removedProperty, ...elementRest } = this.data[i];
+                
+                let restElement: Omit<T,K> = elementRest;
+                
+                const newParam: {[key in K]: Array<any>} = {
+                    [param] : processed.toArray()
+                }
+                let newElement: newDataType = restElement & newParam
             }
-
         }
         return qArray(this.data);
     },
