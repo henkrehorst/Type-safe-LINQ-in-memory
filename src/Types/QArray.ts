@@ -7,7 +7,10 @@ export type QArray<T> = {
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
     orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
     where: (f: (_: T) => boolean) => QArray<T>,
-    include: <K extends IncludeKeys<T>, P extends getArrayType<T[K]>>(param: K, f: (_: QArray<P>) => QArray<Partial<P>>) => QArray<Omit<T,K> & {[key in K] : Array<Partial<P>>}>,
+    include: <K extends IncludeKeys<T>, P extends getArrayType<T[K]>, r>(
+                param: K,
+                f: (_: QArray<P>
+            ) => QArray<r>) => QArray<Omit<T,K> & {[key in K] : Array<r>}>,
     toArray: () => Array<T>
 }
 
@@ -50,17 +53,17 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         }
         return qArray(newArray)
     },
-    include: function <K extends IncludeKeys<T>, P extends getArrayType<T[K]>>(param: K, f: (_: QArray<P>) => QArray<Partial<P>>){
-        const newArray: Array<Omit<T,K> & {[key in K]: Array<Partial<P>>}> = [];
+    include: function <K extends IncludeKeys<T>, P extends getArrayType<T[K]>, r>(param: K, f: (_: QArray<P>) => QArray<r>){
+        const newArray: Array<Omit<T,K> & {[key in K] : Array<r>}> = [];
         for (let i = 0; i < this.data.length; i++) {
             const element: T[K] = this.data[i][param];
             if(Array.isArray(element)){
                 let processed = f(qArray(element));
                 let { [param]: removedProperty, ...elementRest } = this.data[i];
-                
+
                 let restElement: Omit<T,K> = elementRest;
-                
-                let newParam: {[key in K]: Array<Partial<P>>} = { [param] : processed.toArray() } as {[key in K]: Array<Partial<P>>};
+
+                let newParam: {[key in K]: Array<r>} = { [param] : processed.toArray() } as {[key in K]: Array<r>};
 
                 let test = {...restElement, ...newParam};
                 newArray.push(test);
