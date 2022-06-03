@@ -35,10 +35,6 @@ describe('OrderBy testing', () => {
         let students = qArray([student1, student2, student2, student3])
         expect(students.orderBy('FirstName').toArray()).to.deep.equal([student2, student2, student3, student1])
     });
-    it('orderBy not supported type', () => {
-        let students = qArray([student1, student2])
-        expect(students.orderBy("Courses").toArray()).to.deep.equal([student1, student2]);
-    });
     it('orderBy boolean', () => {
         let students = qArray([student1, student2, student3]);
         expect(students.orderBy('Active').toArray()).to.deep.equal([student1, student3, student2]);
