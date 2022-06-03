@@ -1,11 +1,11 @@
 type IncludeKeys<T> = { [K in keyof T]: T[K] extends Array<object> ? K : never }[keyof T];
-
+type OrderByKeys<T> = { [K in keyof T]: T[K] extends string | number | boolean ? K : never }[keyof T];
 type getArrayType<T> = T extends Array<object> ? T[number] : never
 
 export type QArray<T> = {
     data: Array<T>
     select: <K extends keyof T>(...props: K[]) => QArray<Pick<T,typeof props[number]>>
-    orderBy: <K extends keyof T>(property: K, order?: "asc" | "desc") => QArray<T>
+    orderBy: <K extends OrderByKeys<T>>(property: K, order?: "asc" | "desc") => QArray<T>
     where: (f: (_: T) => boolean) => QArray<T>,
     include: <K extends IncludeKeys<T>, P extends getArrayType<T[K]>, R>(
                 param: K,
@@ -25,7 +25,7 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         });
         return qArray<Pick<T,typeof props[number]>>(array);
     },
-    orderBy: function <K extends keyof T>(property: K, order: 'asc' | 'desc' = 'asc') {
+    orderBy: function <K extends OrderByKeys<T>>(property: K, order: 'asc' | 'desc' = 'asc') {
         return qArray<T>(initData.sort((a, b) => {
             if(order === 'desc') [a, b] = [b, a];
 
