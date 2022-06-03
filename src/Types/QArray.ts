@@ -44,14 +44,7 @@ export const qArray = <T>(initData: Array<T>): QArray<T> => ({
         }));
     },
     where: function(f: (_: T) => boolean) {
-        //We considered the standard filter function, but we found it to be slower than a for loop
-        let newArray: Array<T> = []
-        for(let i = 0; i < this.data.length; i++){
-            if(f(this.data[i])){
-                newArray.push(this.data[i])
-            }
-        }
-        return qArray(newArray)
+        return qArray(this.data.filter(x => f(x)));
     },
     include: function <K extends IncludeKeys<T>, P extends getArrayType<T[K]>, R>(param: K, f: (_: QArray<P>) => QArray<R>){
         const newArray: Array<Omit<T,K> & {[key in K] : Array<R>}> = [];
