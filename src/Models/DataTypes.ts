@@ -10,7 +10,7 @@ export type Study = {
 
 export type Course = {
     Subject: string
-    Professor: Professor
+    Professors: Array<Professor>
     Study: Study
 }
 

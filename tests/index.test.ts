@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {timesTwo} from "../src";
-import {qArray} from "../src/Types/QArray"
+import {qArray} from "../src/QArray"
 import {student1, student2, student3} from "../src/Data/Data"
 import {it} from "mocha";
 
@@ -12,9 +12,7 @@ describe('Check check', () => {
 
 describe('Select testing', () => {
     it('', () => {
-        const students = [student1,student2,student3]
-
-        let studentArray = qArray(students)
+        let studentArray = qArray([student1,student2,student3])
 
         let selectedStudentArray = studentArray.select("FirstName", "StudentNumber")
 
@@ -43,7 +41,17 @@ describe('OrderBy testing', () => {
 
 describe('Where testing', () => {
     it('filtering on string', () => {
-        let students = qArray([student1, student2, student3])
+        const students = qArray([student1, student2, student3])
+
         expect(students.where(x => x.FirstName === "Henk").toArray()).to.deep.equal([student2])
+    })
+})
+
+describe('Include testing', () => {
+    it('',() =>{
+        let students = qArray([student1, student2, student3])
+
+        let allThreeStudents = students.include('Courses',x => x.select('Subject') )
+        expect(allThreeStudents.toArray()[0].Courses[0]).has.all.keys(['Subject']);
     })
 })
