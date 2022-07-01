@@ -39,13 +39,13 @@ export const prof2: Professor = {
 
 export const course1: Course = {
     Subject: 'Development',
-    Professor: prof1,
+    Professors: [prof1, prof2],
     Study: study1
 }
 
 export const course2: Course = {
     Subject: 'Analyse',
-    Professor: prof2,
+    Professors: [prof2],
     Study: study1
 }
 
